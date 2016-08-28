@@ -8,13 +8,10 @@ and open the template in the editor.
     Author     : MJLee
 */
 
-
-.chart rect {
+.bar {
     fill: steelblue;
 }
 
-.chart text {
-    fill: white;
-    font: 10px sans-serif;
-    text-anchor: end;
+.axis path {
+    display: none;
 }
