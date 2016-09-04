@@ -41,6 +41,7 @@ var navXScale = d3.scaleTime()
 
 var stack = d3.stack();
 
+
 //Get data
 d3.csv("./data/data.csv", type, function (error, data) {
 
@@ -58,7 +59,7 @@ d3.csv("./data/data.csv", type, function (error, data) {
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x).ticks(d3.timeDay.every(1)));
 
-    // Add the Y Axis
+    // Add the Y Axis;
     g.append("g")
         .call(d3.axisLeft(y).ticks(10));
 
@@ -90,15 +91,39 @@ d3.csv("./data/data.csv", type, function (error, data) {
     navXScale.domain(d3.extent(data, function (d) {
         return d.date;
     })); //todo - add 1 day
-    y.domain([0, d3.max(data, function (d) {
+    navYScale.domain([0, d3.max(data, function (d) {
         return d.total;
     })]).nice();
 
     //navigation chart - X Axis
     navChart.append("g")
-        .classed("axis axis--x")
+        .classed("axis axis--x", true)
         .attr("transform", "translate(0," + navHeight + ")")
         .call(d3.axisBottom(navXScale).ticks(d3.timeDay.every(1)));
+
+    //navigation chart - navigation area
+    var navData = d3.area()
+        .x(function (d) {
+            return navXScale(d.date);
+        })
+        .y0(navHeight)
+        .y1(function (d) {
+            return navYScale(d.total);
+        });
+
+    // navigation chart - navigation line
+    var navLine = d3.line()
+        .x(function(d){return navXScale(d.date);})
+        .y(function(d){return navYScale(d.total);});
+
+    navChart.append('path')
+        .classed("data", true)
+        .attr('d', navData(data));
+
+    navChart.append('path')
+        .classed("line", true)
+        .attr('d', navLine(data));
+
 });
 
 

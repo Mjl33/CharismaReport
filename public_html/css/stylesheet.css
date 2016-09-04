@@ -12,6 +12,13 @@ and open the template in the editor.
     fill: steelblue;
 }
 
-.axis path {
-    display: none;
+.navigator .data{
+    fill: lightgrey;
+    stroke-width: 0px;
+}
+
+.navigator .line{
+    fill: none;
+    stroke: darkgrey;
+    stroke-width: 1px;
 }
