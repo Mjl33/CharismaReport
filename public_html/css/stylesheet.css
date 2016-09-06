@@ -22,3 +22,12 @@ and open the template in the editor.
     stroke: darkgrey;
     stroke-width: 1px;
 }
+ .navigator .viewport{
+    stroke: grey;
+    fill: black;
+    fill-opacity: 0.2;
+}
+ .viewport .overlay{
+     stroke: none;
+     fill: none;
+ }

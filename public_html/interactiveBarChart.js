@@ -54,24 +54,24 @@ d3.csv("./data/data.csv", type, function (error, data) {
     })]).nice();
 
     // Add the X Axis
-    g.append("g")
+    var xAxis = g.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x).ticks(d3.timeDay.every(1)));
 
     // Add the Y Axis;
-    g.append("g")
+    var yAxis = g.append("g")
         .call(d3.axisLeft(y).ticks(10));
 
     //construct stacked bar
-    g.selectAll(".serie")
+    var series = g.selectAll(".series")
         .data(stack.keys(data.columns.slice(1))(data))
         .enter().append("g")
-        .attr("class", "serie")
+        .classed("series", true)
         .attr("fill", function (d) {
             return z(d.key);
-        })
-        .selectAll("rect")
+        });
+    var bars = series.selectAll("rect")
         .data(function (d) {
             return d;
         })
@@ -101,7 +101,7 @@ d3.csv("./data/data.csv", type, function (error, data) {
         .attr("transform", "translate(0," + navHeight + ")")
         .call(d3.axisBottom(navXScale).ticks(d3.timeDay.every(1)));
 
-    //navigation chart - navigation area
+    //navigation chart - navigation area data
     var navData = d3.area()
         .x(function (d) {
             return navXScale(d.date);
@@ -111,19 +111,38 @@ d3.csv("./data/data.csv", type, function (error, data) {
             return navYScale(d.total);
         });
 
-    // navigation chart - navigation line
+    // navigation chart - navigation line data
     var navLine = d3.line()
         .x(function(d){return navXScale(d.date);})
         .y(function(d){return navYScale(d.total);});
 
+    //navigation chart - draw area
     navChart.append('path')
         .classed("data", true)
         .attr('d', navData(data));
 
+    //navigation chart - draw line
     navChart.append('path')
         .classed("line", true)
         .attr('d', navLine(data));
 
+    //brush
+    var viewport = d3.brushX()
+        .on("brush", function(){
+            x.domain(viewport.empty() ? navXScale.domain() : viewport().extent());
+            redraw();
+        });
+
+    //redraw chart
+    function redraw(){
+        bars.call(series);
+        g.select('axis axis--x').call(xAxis);
+    }
+
+    //navigation chart - viewport
+    navChart.append('g')
+        .classed('viewport', true)
+        .call(viewport);
 });
 
 
@@ -135,3 +154,4 @@ function type(d, i, columns) {
     d.total = t;
     return d;
 }
+
