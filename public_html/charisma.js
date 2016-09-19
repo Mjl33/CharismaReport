@@ -21,7 +21,7 @@ var focusX = d3.scaleBand().rangeRound([0, focusWidth]).padding(0.1).align(0.1),
         navY = d3.scaleLinear().range([navHeight, 0]),
         focusZ = d3.scaleOrdinal().range(d3.schemeCategory20);
 
-var focusXAxis = d3.axisBottom(focusX),
+var focusXAxis = d3.axisBottom(focusX).tickFormat(formatDate),
         navXAxis = d3.axisBottom(navX),
         focusYAxis = d3.axisLeft(focusY);
 
@@ -66,7 +66,7 @@ d3.csv("./data/data.csv", type, function (error, data) {
     focusY.domain([0, d3.max(data, function (d) {
             return d.total;
         })]);
-    navX.domain(d3.extent(function(d){return d.date;}));    
+    navX.domain(d3.extent(data, function(d){return d.date;}));
     navY.domain(focusY.domain());
 
     var bars = focus.selectAll(".series")
@@ -116,10 +116,10 @@ d3.csv("./data/data.csv", type, function (error, data) {
             .attr("transform", "translate(0 ," + navHeight + ")")
             .call(navXAxis);
 
-//    nav.append("g")
-//            .classed("brush", true)
-//            .call(brush)
-//            .call(brush.move, focusX.range());
+   nav.append("g")
+           .classed("brush", true)
+           .call(brush)
+           .call(brush.move, focusX.range());
 //
 //    svg.append("rect")
 //            .classed("zoom", true)
@@ -134,9 +134,8 @@ function brushed() {
         return;
     var s = d3.event.selection || navX.range();
     focusX.domain(s.map(navX.invert, navX));
-    // focus.select(".series").attr("d", bar); //todo hv to redirect this data to the stacked bar
-    focus.selectAll(".series rect").attr("tranform", "translate(" + d3.event.translate[0] + ",0)scale(" + d3.event.scale + ",1");
-    focus.select(".axis--x").call(focusXAxis);
+    // focus.selectAll(".series rect").attr("tranform", "translate(" + d3.event.translate[0] + ",0)scale(" + d3.event.scale + ",1");
+    // focus.select(".axis--x").call(focusXAxis);
     svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
             .scale(focusWidth / (s[1] - s[0]))
             .translate(-s[0], 0));
@@ -155,7 +154,7 @@ function zoomed() {
 
 function type(d, i, columns) {
     d.date = parseDate(d.date);
-    d.date = formatDate(d.date);
+    d.dateString = formatDate(d.date);
     for (i = 1, t = 0; i < columns.length; ++i)
         t += d[columns[i]] = +d[columns[i]];
     d.total = t;

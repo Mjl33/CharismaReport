@@ -8,8 +8,12 @@ and open the template in the editor.
     Author     : MJLee
 */
 
-.bar {
-    fill: steelblue;
+/*.bar {*/
+    /*fill: steelblue;*/
+/*}*/
+
+.area{
+    fill: lightgrey;
 }
 
 .zoom {
