@@ -1,3 +1,9 @@
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
 /* global d3, Infinity */
 
 var width = 960;
@@ -176,3 +182,4 @@ function type(d, i, columns) {
     d.total = t;
     return d;
 }
+
